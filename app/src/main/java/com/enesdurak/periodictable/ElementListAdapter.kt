@@ -2,19 +2,20 @@ package com.enesdurak.periodictable
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.AdapterView
 import androidx.recyclerview.widget.RecyclerView
 import com.enesdurak.periodictable.data.model.ElementModel
 import com.enesdurak.periodictable.data.model.EmptyModel
 import com.enesdurak.periodictable.data.model.PeriodicTableModel
 
-class ElementListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ElementListAdapter(private val onItemClickListener: (ElementModel) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var elementList : List<PeriodicTableModel> = arrayListOf()
     set(value){
         field = value
         notifyDataSetChanged()
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val viewHolder = when(viewType){
+        return when(viewType){
             PeriodicTableViewType.ELEMENT_TYPE.value -> {
                 val itemView = LayoutInflater.from(parent.context)
                     .inflate(R.layout.adapter_item_element, parent, false)
@@ -33,13 +34,13 @@ class ElementListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 ElementListViewHolder(itemView)
             }
         }
-        return viewHolder
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when(elementList[position]){
             is ElementModel -> {
-                (holder as ElementListViewHolder).bind(elementList[position] as ElementModel)
+                (holder as ElementListViewHolder).bind(elementList[position] as ElementModel,
+                onItemClickListener)
             }
 
             is EmptyModel -> {
@@ -47,7 +48,8 @@ class ElementListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
 
             else -> {
-                (holder as ElementListViewHolder).bind(elementList[position] as ElementModel)
+                (holder as ElementListViewHolder).bind(elementList[position] as ElementModel,
+                onItemClickListener )
             }
         }
     }
